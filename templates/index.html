@@ -2,63 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fetal AI Health Care Prediction</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      color: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 900px;
+    }
+
+    h2 {
+      color: #00f2ff;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    label {
+      color: #d3d3d3;
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    .form-control:focus {
+      border-color: #00f2ff;
+      box-shadow: 0 0 5px #00f2ff;
+    }
+
+    .btn-glow {
+      background-color: #00f2ff;
+      color: #000;
+      border: none;
+      box-shadow: 0 0 10px #00f2ff, 0 0 40px #00f2ff70;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .btn-glow:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00f2ff, 0 0 60px #00f2ff90;
+    }
+
+    .alert-info {
+      background-color: rgba(0, 242, 255, 0.1);
+      border-color: #00f2ff;
+      color: #00f2ff;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Fetal AI Health Care Prediction</h1>
-  <div class="container">
+  <div class="glass-card">
+    <h2>Fetal AI Health Care Prediction</h2>
     <form action="/predict" method="POST">
-      <!-- First Row -->
-      <div class="input-row">
-        <div class="input-group">
-          <label for="acc">Accelerations:</label>
-          <input type="text" id="acc" name="acc" placeholder="Enter value" required>
+      <div class="row g-3">
+        {% for field, label in {
+          'acc': 'Accelerations',
+          'pd': 'Prolongued Decelerations',
+          'astv': 'Abnormal Short-Term Variability',
+          'pot': '% Abnormal Long-Term Variability',
+          'mv': 'Mean Long-Term Variability',
+          'hm': 'Histogram Mode',
+          'hmed': 'Histogram Median',
+          'hv': 'Histogram Variance'
+        }.items() %}
+        <div class="col-md-6">
+          <label for="{{ field }}">{{ label }}</label>
+          <input type="text" id="{{ field }}" name="{{ field }}" class="form-control" required>
         </div>
-        <div class="input-group">
-          <label for="pd">Prolongued Decelerations:</label>
-          <input type="text" id="pd" name="pd" placeholder="Enter value" required>
-        </div>
-        <div class="input-group group-astv">
-          <label for="astv">Abnormal Short-Term Variability:</label>
-          <input type="text" id="astv" name="astv" placeholder="Enter value" required>
-        </div>
-        <div class="input-group group-pot">
-          <label for="pot">Percentage of Abnormal Long-Term Variability:</label>
-          <input type="text" id="pot" name="pot" placeholder="Enter value" required>
-        </div>
-      </div>
-      
-      <!-- Second Row -->
-      <div class="input-row">
-        <div class="input-group">
-          <label for="mv">Mean Long-Term Variability:</label>
-          <input type="text" id="mv" name="mv" placeholder="Enter value" required>
-        </div>
-        <div class="input-group">
-          <label for="hm">Histogram Mode:</label>
-          <input type="text" id="hm" name="hm" placeholder="Enter value" required>
-        </div>
-        <div class="input-group">
-          <label for="hmed">Histogram Median:</label>
-          <input type="text" id="hmed" name="hmed" placeholder="Enter value" required>
-        </div>
-        <div class="input-group">
-          <label for="hv">Histogram Variance:</label>
-          <input type="text" id="hv" name="hv" placeholder="Enter value" required>
-        </div>
+        {% endfor %}
       </div>
 
-      <div class="btn-container">
-        <button type="submit" class="btn">Predict</button>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-glow btn-lg w-50">Predict</button>
       </div>
-
     </form>
 
-    <div class="prediction-result">
-      <h2 class= "header-{{ prediction }}">Predicted Health Condition: <span class="span-{{ prediction }}">{{ prediction }} </span></h2>
+    {% if prediction %}
+    <div class="alert alert-info mt-4 text-center">
+      Predicted Health Condition: <strong>{{ prediction }}</strong>
     </div>
+    {% endif %}
   </div>
 </body>
 </html>
